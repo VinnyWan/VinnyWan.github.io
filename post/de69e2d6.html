@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/3232.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/1616.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="baidu-site-verification" content="df9JVMkRxuUO7Ob7">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"vinnywang.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="查看集群证书过期情况1234567891011121314151617181920kubeadm alpha certs check-expiration[check-expiration] Reading configuration from the cluster...[check-expiration] FYI: You can look at this config file with &amp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker--k8s证书过期解决方案">
+<meta property="og:url" content="https://vinnywang.com/post/de69e2d6.html">
+<meta property="og:site_name" content="王楠的Blog">
+<meta property="og:description" content="查看集群证书过期情况1234567891011121314151617181920kubeadm alpha certs check-expiration[check-expiration] Reading configuration from the cluster...[check-expiration] FYI: You can look at this config file with &amp;">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-02-09T01:42:36.937Z">
+<meta property="article:modified_time" content="2021-02-09T03:04:05.126Z">
+<meta property="article:author" content="王楠">
+<meta property="article:tag" content="linux">
+<meta property="article:tag" content="docker">
+<meta property="article:tag" content="k8s">
+<meta property="article:tag" content="kubernetes">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://vinnywang.com/post/de69e2d6.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Docker--k8s证书过期解决方案 | 王楠的Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">王楠的Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">遇事无难易，而勇于敢为。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-python">
+
+    <a href="/categories/python/" rel="section"><i class="fab fa-python fa-fw"></i>Python</a>
+
+  </li>
+        <li class="menu-item menu-item-容器">
+
+    <a href="/categories/docker/" rel="section"><i class="fab fa-docker fa-fw"></i>容器</a>
+
+  </li>
+        <li class="menu-item menu-item-html">
+
+    <a href="/categories/html/" rel="section"><i class="fab fa-html5 fa-fw"></i>HTML</a>
+
+  </li>
+        <li class="menu-item menu-item-linux">
+
+    <a href="/categories/Linux/" rel="section"><i class="fab fa-linux fa-fw"></i>Linux</a>
+
+  </li>
+        <li class="menu-item menu-item-机器学习">
+
+    <a href="/categories/ml/" rel="section"><i class="fas fa-cogs fa-fw"></i>机器学习</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://vinnywang.com/post/de69e2d6.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/icon/avatar.jpg">
+      <meta itemprop="name" content="王楠">
+      <meta itemprop="description" content="生命中最值得投资的是自己,给自己最佳的投资是学习。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="王楠的Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Docker--k8s证书过期解决方案
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-09 09:42:36 / 修改时间：11:04:05" itemprop="dateCreated datePublished" datetime="2021-02-09T09:42:36+08:00">2021-02-09</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/docker/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/docker/linux/k8s/" itemprop="url" rel="index"><span itemprop="name">k8s</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/docker/linux/k8s/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/de69e2d6.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/de69e2d6.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="查看集群证书过期情况"><a href="#查看集群证书过期情况" class="headerlink" title="查看集群证书过期情况"></a>查看集群证书过期情况</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">kubeadm alpha certs check-expiration</span><br><span class="line">[check-expiration] Reading configuration from the cluster...</span><br><span class="line">[check-expiration] FYI: You can look at this config file with &#39;kubectl -n kube-system get cm kubeadm-config -oyaml&#39;</span><br><span class="line"></span><br><span class="line">CERTIFICATE                EXPIRES                  RESIDUAL TIME   CERTIFICATE AUTHORITY   EXTERNALLY MANAGED</span><br><span class="line">admin.conf                 Dec 29, 2021 06:53 UTC   358d                                    no</span><br><span class="line">apiserver                  Dec 29, 2021 06:53 UTC   358d            ca                      no</span><br><span class="line">apiserver-etcd-client      Dec 29, 2021 06:53 UTC   358d            etcd-ca                 no</span><br><span class="line">apiserver-kubelet-client   Dec 29, 2021 06:53 UTC   358d            ca                      no</span><br><span class="line">controller-manager.conf    Dec 29, 2021 06:53 UTC   358d                                    no</span><br><span class="line">etcd-healthcheck-client    Dec 29, 2021 06:53 UTC   358d            etcd-ca                 no</span><br><span class="line">etcd-peer                  Dec 29, 2021 06:53 UTC   358d            etcd-ca                 no</span><br><span class="line">etcd-server                Dec 29, 2021 06:53 UTC   358d            etcd-ca                 no</span><br><span class="line">front-proxy-client         Dec 29, 2021 06:53 UTC   358d            front-proxy-ca          no</span><br><span class="line">scheduler.conf             Dec 29, 2021 06:53 UTC   358d                                    no</span><br><span class="line"></span><br><span class="line">CERTIFICATE AUTHORITY   EXPIRES                  RESIDUAL TIME   EXTERNALLY MANAGED</span><br><span class="line">ca                      Dec 23, 2029 11:49 UTC   8y              no</span><br><span class="line">etcd-ca                 Dec 23, 2029 11:49 UTC   8y              no</span><br><span class="line">front-proxy-ca          Dec 23, 2029 11:49 UTC   8y              no</span><br></pre></td></tr></table></figure>
+<a id="more"></a>  
+<h1 id="查看根CA证书的有效期"><a href="#查看根CA证书的有效期" class="headerlink" title="查看根CA证书的有效期"></a>查看根CA证书的有效期</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cd &#x2F;etc&#x2F;kubernetes&#x2F;pki</span><br><span class="line"># 当前证书是10年的证书,可以直接生成, 如果和上面&#96;EXPIRES&#96; 日期是一样的是不适用</span><br><span class="line">ls | grep ca.crt | xargs -I &#123;&#125; openssl x509 -text -in &#123;&#125; | grep &quot;Not After&quot;</span><br><span class="line">            Not After : Dec 23 11:49:43 2029 GMT</span><br><span class="line">            Not After : Dec 23 11:49:44 2029 GMT</span><br></pre></td></tr></table></figure>
+<h1 id="查看证书目录结构"><a href="#查看证书目录结构" class="headerlink" title="查看证书目录结构"></a>查看证书目录结构</h1><p>kubelet 上一般不会明确指定服务端证书, 而是只指定 ca 根证书, 让 kubelet 根据本地主机信息自动生成服务端证书并保存到配置的cert-dir文件夹中。</p>
+<h2 id="Kubernetes-集群根证书"><a href="#Kubernetes-集群根证书" class="headerlink" title="Kubernetes 集群根证书"></a>Kubernetes 集群根证书</h2><p>== /etc/kubernetes/pki/ca.crt 根证书 ==<br>== /etc/kubernetes/pki/ca.key 根证书 ==</p>
+<h2 id="其他证书均为根证书签发"><a href="#其他证书均为根证书签发" class="headerlink" title="其他证书均为根证书签发"></a>其他证书均为根证书签发</h2><ul>
+<li>kube-apiserver 组件持有的服务端证书<br>　　/etc/kubernetes/pki/apiserver.crt<br>　　/etc/kubernetes/pki/apiserver.key</li>
+<li>kubelet 组件持有的客户端证书<br>　　/etc/kubernetes/pki/apiserver-kubelet-client.crt<br>　　/etc/kubernetes/pki/apiserver-kubelet-client.key<h2 id="汇聚层-aggregator-证书"><a href="#汇聚层-aggregator-证书" class="headerlink" title="汇聚层(aggregator)证书"></a>汇聚层(aggregator)证书</h2>== /etc/kubernetes/pki/front-proxy-ca.crt ==<br>== /etc/kubernetes/pki/front-proxy-ca.key ==</li>
+<li>代理端使用的客户端证书, 用作代用户与 kube-apiserver 认证<br>  /etc/kubernetes/pki/front-proxy-client.crt<br>  /etc/kubernetes/pki/front-proxy-client.key<h2 id="etcd-集群根证书"><a href="#etcd-集群根证书" class="headerlink" title="etcd 集群根证书"></a>etcd 集群根证书</h2>== /etc/kubernetes/pki/etcd/ca.crt ==<br>== /etc/kubernetes/pki/etcd/ca.key ==</li>
+<li>etcd server 持有的服务端证书<br>  /etc/kubernetes/pki/etcd/server.crt<br>  /etc/kubernetes/pki/etcd/server.key</li>
+<li>peer 集群中节点互相通信使用的客户端证书<br>  /etc/kubernetes/pki/etcd/peer.crt<br>  /etc/kubernetes/pki/etcd/peer.key</li>
+<li>pod 中定义 Liveness 探针使用的客户端证书<br>  /etc/kubernetes/pki/etcd/healthcheck-client.crt<br>  /etc/kubernetes/pki/etcd/healthcheck-client.key</li>
+<li>配置在 kube-apiserver 中用来与 etcd server 做双向认证的客户端证书<br>  /etc/kubernetes/pki/apiserver-etcd-client.crt<br>  /etc/kubernetes/pki/apiserver-etcd-client.key<h2 id="Serveice-Account秘钥"><a href="#Serveice-Account秘钥" class="headerlink" title="Serveice Account秘钥"></a>Serveice Account秘钥</h2>== /etc/kubernetes/pki/sa.key ==<br>== /etc/kubernetes/pki/sa.pub ==<br>这组的密钥对儿仅提供给 kube-controller-manager 使用. kube-controller-manager 通过 sa.key 对 token 进行签名, master 节点通过公钥 sa.pub 进行签名的验证.<br>API Server的authenticating环节支持多种身份校验方式：client cert、bearer token、static password auth等，这些方式中有一种方式通过authenticating（Kubernetes API Server会逐个方式尝试），那么身份校验就会通过。一旦API Server发现client发起的request使用的是service account token的方式，API Server就会自动采用signed bearer token方式进行身份校验。而request就会使用携带的service account token参与验证。该token是API Server在创建service account时用API server启动参数：–service-account-key-file的值签署(sign)生成的。如果–service-account-key-file未传入任何值，那么将默认使用–tls-private-key-file的值，即API Server的私钥（server.key）。<br>通过authenticating后，API Server将根据Pod username所在的group：system:serviceaccounts和system:serviceaccounts:(NAMESPACE)的权限对其进行authority 和admission control两个环节的处理。在这两个环节中，cluster管理员可以对service account的权限进行细化设置。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"># &#96;pki&#96;目录下属于根证书目录</span><br><span class="line"># &#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;ca.crt 根证书</span><br><span class="line"># &#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;ca.key 根证书</span><br><span class="line"># </span><br><span class="line">tree &#x2F;etc&#x2F;kubernetes&#x2F;pki</span><br><span class="line">	&#x2F;etc&#x2F;kubernetes&#x2F;pki</span><br><span class="line">	├── apiserver.crt</span><br><span class="line">	├── apiserver-etcd-client.crt</span><br><span class="line">	├── apiserver-etcd-client.key</span><br><span class="line">	├── apiserver.key</span><br><span class="line">	├── apiserver-kubelet-client.crt</span><br><span class="line">	├── apiserver-kubelet-client.key</span><br><span class="line">	├── ca.crt</span><br><span class="line">	├── ca.key</span><br><span class="line">	├── etcd</span><br><span class="line">	│   ├── ca.crt</span><br><span class="line">	│   ├── ca.key</span><br><span class="line">	│   ├── healthcheck-client.crt</span><br><span class="line">	│   ├── healthcheck-client.key</span><br><span class="line">	│   ├── peer.crt</span><br><span class="line">	│   ├── peer.key</span><br><span class="line">	│   ├── server.crt</span><br><span class="line">	│   └── server.key</span><br><span class="line">	├── front-proxy-ca.crt</span><br><span class="line">	├── front-proxy-ca.key</span><br><span class="line">	├── front-proxy-client.crt</span><br><span class="line">	├── front-proxy-client.key</span><br><span class="line">	├── sa.key</span><br><span class="line">	└── sa.pub</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h1 id="备份"><a href="#备份" class="headerlink" title="备份"></a>备份</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 备份原有证书</span><br><span class="line">cp -rp &#x2F;etc&#x2F;kubernetes &#x2F;etc&#x2F;kubernetes.bak</span><br><span class="line"># 备份etcd数据目录</span><br><span class="line">cp -r &#x2F;var&#x2F;lib&#x2F;etcd &#x2F;var&#x2F;lib&#x2F;etcd.bak</span><br></pre></td></tr></table></figure>
+<h1 id="更新证书"><a href="#更新证书" class="headerlink" title="更新证书"></a>更新证书</h1><h2 id="生成集群配置的yaml文件"><a href="#生成集群配置的yaml文件" class="headerlink" title="生成集群配置的yaml文件"></a>生成集群配置的yaml文件</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">kubeadm config view &gt; &#x2F;root&#x2F;kubeadm.yaml</span><br><span class="line">cat &#x2F;root&#x2F;kubeadm.yaml</span><br><span class="line">apiServer:</span><br><span class="line">  extraArgs:</span><br><span class="line">    authorization-mode: Node,RBAC</span><br><span class="line">  timeoutForControlPlane: 4m0s</span><br><span class="line">apiVersion: kubeadm.k8s.io&#x2F;v1beta2</span><br><span class="line">certificatesDir: &#x2F;etc&#x2F;kubernetes&#x2F;pki</span><br><span class="line">clusterName: kubernetes</span><br><span class="line">controllerManager: &#123;&#125;</span><br><span class="line">dns:</span><br><span class="line">  type: CoreDNS</span><br><span class="line">etcd:</span><br><span class="line">  local:</span><br><span class="line">    dataDir: &#x2F;var&#x2F;lib&#x2F;etcd</span><br><span class="line">imageRepository: k8s.gcr.io</span><br><span class="line">kind: ClusterConfiguration</span><br><span class="line">kubernetesVersion: v1.17.0</span><br><span class="line">networking:</span><br><span class="line">  dnsDomain: cluster.local</span><br><span class="line">  podSubnet: 10.244.0.0&#x2F;16</span><br><span class="line">  serviceSubnet: 10.96.0.0&#x2F;12</span><br><span class="line">scheduler: &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="证书更新使用帮助"><a href="#证书更新使用帮助" class="headerlink" title="证书更新使用帮助"></a>证书更新使用帮助</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">kubeadm alpha certs renew --help</span><br><span class="line">Usage:</span><br><span class="line">  kubeadm alpha certs renew [flags]</span><br><span class="line">  kubeadm alpha certs renew [command]</span><br><span class="line"></span><br><span class="line">Available Commands:</span><br><span class="line">  admin.conf               Renew the certificate embedded in the kubeconfig file for the admin to use and for kubeadm itself</span><br><span class="line">  all                      Renew all available certificates</span><br><span class="line">  apiserver                Renew the certificate for serving the Kubernetes API</span><br><span class="line">  apiserver-etcd-client    Renew the certificate the apiserver uses to access etcd</span><br><span class="line">  apiserver-kubelet-client Renew the certificate for the API server to connect to kubelet</span><br><span class="line">  controller-manager.conf  Renew the certificate embedded in the kubeconfig file for the controller manager to use</span><br><span class="line">  etcd-healthcheck-client  Renew the certificate for liveness probes to healthcheck etcd</span><br><span class="line">  etcd-peer                Renew the certificate for etcd nodes to communicate with each other</span><br><span class="line">  etcd-server              Renew the certificate for serving etcd</span><br><span class="line">  front-proxy-client       Renew the certificate for the front proxy client</span><br><span class="line">  scheduler.conf           Renew the certificate embedded in the kubeconfig file for the scheduler manager to use</span><br></pre></td></tr></table></figure>
+<h2 id="更新证书操作"><a href="#更新证书操作" class="headerlink" title="更新证书操作"></a>更新证书操作</h2>每个master节点都需要执行的, 切记切记<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"># 更新所有服务的证书,如果不确定可以先更新一个看下结果用检查证书的命令, 上面的用法上有指定单独服务的名称</span><br><span class="line">kubeadm alpha certs renew all --config&#x3D;&#x2F;root&#x2F;kubeadm.yaml</span><br><span class="line">[renew] Reading configuration from the cluster...</span><br><span class="line">[renew] FYI: You can look at this config file with &#39;kubectl -n kube-system get cm kubeadm-config -oyaml&#39;</span><br><span class="line"></span><br><span class="line">certificate embedded in the kubeconfig file for the admin to use and for kubeadm itself renewed</span><br><span class="line">certificate for serving the Kubernetes API renewed</span><br><span class="line">certificate the apiserver uses to access etcd renewed</span><br><span class="line">certificate for the API server to connect to kubelet renewed</span><br><span class="line">certificate embedded in the kubeconfig file for the controller manager to use renewed</span><br><span class="line">certificate for liveness probes to healthcheck etcd renewed</span><br><span class="line">certificate for etcd nodes to communicate with each other renewed</span><br><span class="line">certificate for serving etcd renewed</span><br><span class="line">certificate for the front proxy client renewed</span><br><span class="line">certificate embedded in the kubeconfig file for the scheduler manager to use renewed</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h1 id="再次查询证书期限"><a href="#再次查询证书期限" class="headerlink" title="再次查询证书期限"></a>再次查询证书期限</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">root @ master ➜  pki  kubeadm alpha certs check-expiration</span><br><span class="line">[check-expiration] Reading configuration from the cluster...</span><br><span class="line">[check-expiration] FYI: You can look at this config file with &#39;kubectl -n kube-system get cm kubeadm-config -oyaml&#39;</span><br><span class="line"></span><br><span class="line">CERTIFICATE                EXPIRES                  RESIDUAL TIME   CERTIFICATE AUTHORITY   EXTERNALLY MANAGED</span><br><span class="line">admin.conf                 Jan 04, 2022 07:55 UTC   364d                                    no</span><br><span class="line">apiserver                  Jan 04, 2022 07:55 UTC   364d            ca                      no</span><br><span class="line">apiserver-etcd-client      Jan 04, 2022 07:55 UTC   364d            etcd-ca                 no</span><br><span class="line">apiserver-kubelet-client   Jan 04, 2022 07:55 UTC   364d            ca                      no</span><br><span class="line">controller-manager.conf    Jan 04, 2022 07:55 UTC   364d                                    no</span><br><span class="line">etcd-healthcheck-client    Jan 04, 2022 07:55 UTC   364d            etcd-ca                 no</span><br><span class="line">etcd-peer                  Jan 04, 2022 07:55 UTC   364d            etcd-ca                 no</span><br><span class="line">etcd-server                Jan 04, 2022 07:55 UTC   364d            etcd-ca                 no</span><br><span class="line">front-proxy-client         Jan 04, 2022 07:55 UTC   364d            front-proxy-ca          no</span><br><span class="line">scheduler.conf             Jan 04, 2022 07:55 UTC   364d                                    no</span><br><span class="line"></span><br><span class="line">CERTIFICATE AUTHORITY   EXPIRES                  RESIDUAL TIME   EXTERNALLY MANAGED</span><br><span class="line">ca                      Dec 23, 2029 11:49 UTC   8y              no</span><br><span class="line">etcd-ca                 Dec 23, 2029 11:49 UTC   8y              no</span><br><span class="line">front-proxy-ca          Dec 23, 2029 11:49 UTC   8y              no</span><br></pre></td></tr></table></figure>
+<h1 id="重启服务"><a href="#重启服务" class="headerlink" title="重启服务"></a>重启服务</h1>如果上述操作执行之后集群就恢复了,可以不执行如下操作, 但是没有的话,尝试下如下的命令.<br>命令的作用是直接重启下和证书相关的应用的容器,重新加载证书.<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker ps |grep -E &#39;k8s_kube-apiserver|k8s_kube-controller-manager|k8s_kube-scheduler|k8s_etcd_etcd&#39; | awk -F &#39; &#39; &#39;&#123;print $1&#125;&#39; |xargs docker restart</span><br></pre></td></tr></table></figure></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>王楠
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://vinnywang.com/post/de69e2d6.html" title="Docker--k8s证书过期解决方案">https://vinnywang.com/post/de69e2d6.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/linux/" rel="tag"># linux</a>
+              <a href="/tags/docker/" rel="tag"># docker</a>
+              <a href="/tags/k8s/" rel="tag"># k8s</a>
+              <a href="/tags/kubernetes/" rel="tag"># kubernetes</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/post/5023a885.html" rel="prev" title="Docker安装及使用">
+      <i class="fa fa-chevron-left"></i> Docker安装及使用
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/post/995b8fff.html" rel="next" title="Docker--Docker运行是资源限制">
+      Docker--Docker运行是资源限制 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E9%9B%86%E7%BE%A4%E8%AF%81%E4%B9%A6%E8%BF%87%E6%9C%9F%E6%83%85%E5%86%B5"><span class="nav-number">1.</span> <span class="nav-text">查看集群证书过期情况</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%A0%B9CA%E8%AF%81%E4%B9%A6%E7%9A%84%E6%9C%89%E6%95%88%E6%9C%9F"><span class="nav-number">2.</span> <span class="nav-text">查看根CA证书的有效期</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E8%AF%81%E4%B9%A6%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84"><span class="nav-number">3.</span> <span class="nav-text">查看证书目录结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Kubernetes-%E9%9B%86%E7%BE%A4%E6%A0%B9%E8%AF%81%E4%B9%A6"><span class="nav-number">3.1.</span> <span class="nav-text">Kubernetes 集群根证书</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E8%AF%81%E4%B9%A6%E5%9D%87%E4%B8%BA%E6%A0%B9%E8%AF%81%E4%B9%A6%E7%AD%BE%E5%8F%91"><span class="nav-number">3.2.</span> <span class="nav-text">其他证书均为根证书签发</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B1%87%E8%81%9A%E5%B1%82-aggregator-%E8%AF%81%E4%B9%A6"><span class="nav-number">3.3.</span> <span class="nav-text">汇聚层(aggregator)证书</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#etcd-%E9%9B%86%E7%BE%A4%E6%A0%B9%E8%AF%81%E4%B9%A6"><span class="nav-number">3.4.</span> <span class="nav-text">etcd 集群根证书</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Serveice-Account%E7%A7%98%E9%92%A5"><span class="nav-number">3.5.</span> <span class="nav-text">Serveice Account秘钥</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%87%E4%BB%BD"><span class="nav-number">4.</span> <span class="nav-text">备份</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E8%AF%81%E4%B9%A6"><span class="nav-number">5.</span> <span class="nav-text">更新证书</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E9%9B%86%E7%BE%A4%E9%85%8D%E7%BD%AE%E7%9A%84yaml%E6%96%87%E4%BB%B6"><span class="nav-number">5.1.</span> <span class="nav-text">生成集群配置的yaml文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%81%E4%B9%A6%E6%9B%B4%E6%96%B0%E4%BD%BF%E7%94%A8%E5%B8%AE%E5%8A%A9"><span class="nav-number">5.2.</span> <span class="nav-text">证书更新使用帮助</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E8%AF%81%E4%B9%A6%E6%93%8D%E4%BD%9C"><span class="nav-number">5.3.</span> <span class="nav-text">更新证书操作</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%86%8D%E6%AC%A1%E6%9F%A5%E8%AF%A2%E8%AF%81%E4%B9%A6%E6%9C%9F%E9%99%90"><span class="nav-number">6.</span> <span class="nav-text">再次查询证书期限</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%87%8D%E5%90%AF%E6%9C%8D%E5%8A%A1"><span class="nav-number">7.</span> <span class="nav-text">重启服务</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="王楠"
+      src="/images/icon/avatar.jpg">
+  <p class="site-author-name" itemprop="name">王楠</p>
+  <div class="site-description" itemprop="description">生命中最值得投资的是自己,给自己最佳的投资是学习。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">74</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/VinnyWan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;VinnyWan" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/13014500261@163.com" title="E-Mail → 13014500261@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/5579467833" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;5579467833" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.ttlsa.com/" title="http:&#x2F;&#x2F;www.ttlsa.com" rel="noopener" target="_blank">运维生存时间</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.yulongjun.com/" title="http:&#x2F;&#x2F;www.yulongjun.com" rel="noopener" target="_blank">于龙君的Blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://nomansky.top/" title="http:&#x2F;&#x2F;nomansky.top" rel="noopener" target="_blank">杨拨云的Blog</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">豫ICP备20019417号-1 </a>
+      <img src="/images/icon/beian.png" style="display: inline-block;">
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2015 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">王楠</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'BPVXVBsk8GC5uYmijr289CAK-MdYXbMMI',
+      appKey     : 'tXmUBAUpnXWt5bosk8Eo3Qsd',
+      placeholder: "欢迎交流讨论...",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
