@@ -21,31 +21,36 @@
     var CONFIG = {"hostname":"vinnywang.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="生命中最值得投资的是自己,给自己最佳的投资是学习。">
-<meta property="og:type" content="website">
-<meta property="og:title" content="王楠的Blog">
-<meta property="og:url" content="https://vinnywang.com/index.html">
+  <meta name="description" content="HostNetwork这是一种直接定义Pod网络的方式。如果在Pod中使用hostNetwork:true配置的话，在这种pod中运行的应用程序可以直接看到pod启动的主机的网络接口。在主机的所有网络接口上都可以访问到该应用程序.一般配合k8s的亲和使用,需要配置nodeSelector. 1234567891011121314151617181920212223242526272829[root">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker--外部访问K8s中Pod的五种方式">
+<meta property="og:url" content="https://vinnywang.com/post/beab2e09.html">
 <meta property="og:site_name" content="王楠的Blog">
-<meta property="og:description" content="生命中最值得投资的是自己,给自己最佳的投资是学习。">
+<meta property="og:description" content="HostNetwork这是一种直接定义Pod网络的方式。如果在Pod中使用hostNetwork:true配置的话，在这种pod中运行的应用程序可以直接看到pod启动的主机的网络接口。在主机的所有网络接口上都可以访问到该应用程序.一般配合k8s的亲和使用,需要配置nodeSelector. 1234567891011121314151617181920212223242526272829[root">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-04-01T02:05:01.442Z">
+<meta property="article:modified_time" content="2021-04-01T02:04:04.000Z">
 <meta property="article:author" content="王楠">
-<meta property="article:tag" content="Python,Linux,运维">
+<meta property="article:tag" content="linux">
+<meta property="article:tag" content="docker">
+<meta property="article:tag" content="k8s">
+<meta property="article:tag" content="kubernetes">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://vinnywang.com/">
+<link rel="canonical" href="https://vinnywang.com/post/beab2e09.html">
 
 
 <script id="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome : true,
-    isPost : false,
+    isHome : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>王楠的Blog</title>
+  <title>Docker--外部访问K8s中Pod的五种方式 | 王楠的Blog</title>
   
 
 
@@ -212,9 +217,10 @@
         <div class="content-wrap">
           
 
-          <div class="content index posts-expand">
+          <div class="content post posts-expand">
             
-      
+
+    
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
@@ -230,10 +236,9 @@
       <meta itemprop="name" content="王楠的Blog">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/post/beab2e09.html" class="post-title-link" itemprop="url">Docker--外部访问K8s中Pod的五种方式</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          Docker--外部访问K8s中Pod的五种方式
+        </h1>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -292,7 +297,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="HostNetwork"><a href="#HostNetwork" class="headerlink" title="HostNetwork"></a>HostNetwork</h1><p>这是一种直接定义Pod网络的方式。<br>如果在Pod中使用<code>hostNetwork:true</code>配置的话，在这种pod中运行的应用程序可以直接看到pod启动的主机的网络接口。在主机的所有网络接口上都可以访问到该应用程序.<br>一般配合k8s的亲和使用,需要配置<code>nodeSelector</code>.</p>
+        <h1 id="HostNetwork"><a href="#HostNetwork" class="headerlink" title="HostNetwork"></a>HostNetwork</h1><p>这是一种直接定义Pod网络的方式。<br>如果在Pod中使用<code>hostNetwork:true</code>配置的话，在这种pod中运行的应用程序可以直接看到pod启动的主机的网络接口。在主机的所有网络接口上都可以访问到该应用程序.<br>一般配合k8s的亲和使用,需要配置<code>nodeSelector</code>.</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">[root@tmpcluster-master-1 ~]# cat hostNetwork.yaml </span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: redis</span><br><span class="line">spec:</span><br><span class="line">  hostNetwork: true</span><br><span class="line">  containers:</span><br><span class="line">    - name: redis</span><br><span class="line">      image: redis</span><br><span class="line">      imagePullPolicy: IfNotPresent</span><br><span class="line"></span><br><span class="line">		</span><br><span class="line">[root@tmpcluster-master-1 ~]# kubectl get pods -o wide</span><br><span class="line">NAME    READY   STATUS    RESTARTS   AGE    IP              NODE                  NOMINATED NODE   READINESS GATES</span><br><span class="line">redis   1&#x2F;1     Running   0          101m   18.16.203.103   tmpcluster-worker-1   &lt;none&gt;           &lt;none&gt;</span><br><span class="line"></span><br><span class="line">[root@tmpcluster-master-1 ~]# ssh tmpcluster-worker-1</span><br><span class="line">Last login: Wed Mar 31 16:02:41 2021 from 18.16.200.2</span><br><span class="line"></span><br><span class="line">[root@tmpcluster-worker-1 ~]# ss -natlp|grep 637</span><br><span class="line">LISTEN     0      128          *:6379                     *:*                   users:((&quot;redis-server&quot;,pid&#x3D;330350,fd&#x3D;6))</span><br><span class="line">LISTEN     0      128         :::6379                    :::*                   users:((&quot;redis-server&quot;,pid&#x3D;330350,fd&#x3D;7))</span><br><span class="line"></span><br><span class="line">[root@tmpcluster-master-1 ~]# telnet  18.16.203.103 6379</span><br><span class="line">Trying 18.16.203.103...</span><br><span class="line">Connected to 18.16.203.103.</span><br><span class="line">Escape character is &#39;^]&#39;.</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <h1 id="HostPort"><a href="#HostPort" class="headerlink" title="HostPort"></a>HostPort</h1><p>hostPort是直接将容器的端口与所调度的节点上的端口映射，这样用户就可以通过宿主机的IP加上来访问Pod.<br>切记: 只能调度到没有端口冲突的node上, 需要单独维护pod和宿主机的关系表,相对来说比较麻烦</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">[root@tmpcluster-master-1 ~]# cat hostPort.yaml </span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: redis</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">    - name: redis </span><br><span class="line">      image: redis</span><br><span class="line">      ports:</span><br><span class="line">        - containerPort: 6379 </span><br><span class="line">          hostPort: 6379</span><br><span class="line">		  </span><br><span class="line">[root@tmpcluster-master-1 ~]# kubectl create -f hostPort.yaml </span><br><span class="line">[root@tmpcluster-master-1 ~]# telnet 18.16.203.103 6379</span><br><span class="line">Trying 18.16.203.103...</span><br><span class="line">Connected to 18.16.203.103.</span><br><span class="line">Escape character is &#39;^]&#39;.</span><br><span class="line"></span><br></pre></td></tr></table></figure>
@@ -302,850 +307,60 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line">[root@tmpcluster-master-1 ~]#  cat k8s-yaml&#x2F;tmp-ns&#x2F;test-server&#x2F;test-server-svc.yaml </span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Service</span><br><span class="line">metadata:</span><br><span class="line">  name: test-server</span><br><span class="line">  annotations:</span><br><span class="line">    service.beta.kubernetes.io&#x2F;backend-type: &quot;eni&quot;</span><br><span class="line">    service.beta.kubernetes.io&#x2F;alibaba-cloud-loadbalancer-id: &quot;lb-xxxxxxxxxxxxx&quot;</span><br><span class="line">    service.beta.kubernetes.io&#x2F;alibaba-cloud-loadbalancer-force-override-listeners: &quot;true&quot;</span><br><span class="line">    service.beta.kubernetes.io&#x2F;alibaba-cloud-loadbalancer-protocol-port: &quot;http:4010&quot;</span><br><span class="line">    service.beta.kubernetes.io&#x2F;alibaba-cloud-loadbalancer-health-check-flag: &quot;on&quot;</span><br><span class="line">    service.beta.kubernetes.io&#x2F;alibaba-cloud-loadbalancer-health-check-type: &quot;http&quot;</span><br><span class="line">    service.beta.kubernetes.io&#x2F;alibaba-cloud-loadbalancer-health-check-uri: &quot;&#x2F;health&quot;</span><br><span class="line">    service.beta.kubernetes.io&#x2F;alibaba-cloud-loadbalancer-healthy-threshold: &quot;4&quot;</span><br><span class="line">    service.beta.kubernetes.io&#x2F;alibaba-cloud-loadbalancer-unhealthy-threshold: &quot;4&quot;</span><br><span class="line">    service.beta.kubernetes.io&#x2F;alibaba-cloud-loadbalancer-health-check-timeout: &quot;10&quot;</span><br><span class="line">    service.beta.kubernetes.io&#x2F;alibaba-cloud-loadbalancer-health-check-interval: &quot;3&quot;</span><br><span class="line">  labels:</span><br><span class="line">    app: test-server</span><br><span class="line">  namespace: tmp-ns</span><br><span class="line">spec:</span><br><span class="line">  selector:</span><br><span class="line">    app: test-server</span><br><span class="line">  type: LoadBalancer</span><br><span class="line">  ports:</span><br><span class="line">  - name: http</span><br><span class="line">    port: 4010</span><br><span class="line">    protocol: TCP</span><br><span class="line">    targetPort: 8080</span><br><span class="line"></span><br><span class="line">[root@tmpcluster-master-1 ~]#  kubectl get svc security-server -n base-server</span><br><span class="line">NAME              TYPE           CLUSTER-IP     EXTERNAL-IP     PORT(S)          AGE</span><br><span class="line">test-server   LoadBalancer   172.21.5.189   192.168.100.222   4010:30533&#x2F;TCP   10m</span><br><span class="line"></span><br><span class="line">[root@tmpcluster-master-1 ~]#  kubectl describe svc  test-server -n tmp-ns</span><br><span class="line">Name:                     test-server</span><br><span class="line">Namespace:                tmp-ns</span><br><span class="line">Labels:                   app&#x3D;test-server</span><br><span class="line">                          service.beta.kubernetes.io&#x2F;hash&#x3D;b841232d1321323c1212327f50sd3a3sdf23b9fb78</span><br><span class="line">Annotations:              service.beta.kubernetes.io&#x2F;alibaba-cloud-loadbalancer-force-override-listeners: true</span><br><span class="line">                          service.beta.kubernetes.io&#x2F;alibaba-cloud-loadbalancer-health-check-flag: on</span><br><span class="line">                          service.beta.kubernetes.io&#x2F;alibaba-cloud-loadbalancer-health-check-interval: 3</span><br><span class="line">                          service.beta.kubernetes.io&#x2F;alibaba-cloud-loadbalancer-health-check-timeout: 10</span><br><span class="line">                          service.beta.kubernetes.io&#x2F;alibaba-cloud-loadbalancer-health-check-type: http</span><br><span class="line">                          service.beta.kubernetes.io&#x2F;alibaba-cloud-loadbalancer-health-check-uri: &#x2F;health</span><br><span class="line">                          service.beta.kubernetes.io&#x2F;alibaba-cloud-loadbalancer-healthy-threshold: 4</span><br><span class="line">                          service.beta.kubernetes.io&#x2F;alibaba-cloud-loadbalancer-id: lb-xxxxxxxxxxxxx</span><br><span class="line">                          service.beta.kubernetes.io&#x2F;alibaba-cloud-loadbalancer-protocol-port: http:4010</span><br><span class="line">                          service.beta.kubernetes.io&#x2F;alibaba-cloud-loadbalancer-unhealthy-threshold: 4</span><br><span class="line">                          service.beta.kubernetes.io&#x2F;backend-type: eni</span><br><span class="line">Selector:                 app&#x3D;test-server</span><br><span class="line">Type:                     LoadBalancer</span><br><span class="line">IP:                       172.21.5.189</span><br><span class="line">LoadBalancer Ingress:     192.168.100.222</span><br><span class="line">Port:                     http  4010&#x2F;TCP</span><br><span class="line">TargetPort:               8080&#x2F;TCP</span><br><span class="line">NodePort:                 http  30533&#x2F;TCP</span><br><span class="line">Endpoints:                192.168.22.46:8080,192.168.24.9:8080</span><br><span class="line">Session Affinity:         None</span><br><span class="line">External Traffic Policy:  Cluster</span><br><span class="line">Events:                   &lt;none&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <h1 id="Ingress"><a href="#Ingress" class="headerlink" title="Ingress"></a>Ingress</h1><p>Ingress 是对集群中服务的外部访问进行管理的 API 对象，典型的访问方式是 HTTP。<br>Ingress 可以提供负载均衡、SSL 终结和基于名称的虚拟托管。<br>可以将 Ingress 配置为服务提供外部可访问的 URL、负载均衡流量、终止 SSL/TLS，以及提供基于名称的虚拟主机等能力。 Ingress 控制器 通常负责通过负载均衡器来实现 Ingress，尽管它也可以配置边缘路由器或其他前端来帮助处理流量。<br>直接以域名的形式进行对外暴露, 可以配合负载均衡和dns解析使用,直接访问对应的域名即可.入口就是80端口，然后Ingress controller直接将流量转发给后端Pod，不需再经过kube-proxy的转发，比LoadBalancer方式更优选。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">[root@tmpcluster-master-1 ~]#  cat test-ingress.yaml </span><br><span class="line">apiVersion: extensions&#x2F;v1beta1</span><br><span class="line">kind: Ingress</span><br><span class="line">metadata:</span><br><span class="line">  name: test</span><br><span class="line">  namespace: test-service</span><br><span class="line">spec:</span><br><span class="line">  rules:</span><br><span class="line">  - host: aaa.com</span><br><span class="line">    http:</span><br><span class="line">      paths:</span><br><span class="line">      - backend:</span><br><span class="line">          serviceName: test</span><br><span class="line">          servicePort: 4053</span><br><span class="line"></span><br><span class="line">[root@iZbp1egtbul3dj8svxv3x5Z ~]# kubectl get ingress yearning -n ops-service</span><br><span class="line">NAME       HOSTS              ADDRESS        PORTS   AGE</span><br><span class="line">yearning   aaa.com   22.22.22.22   80      172d</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-      
     </div>
 
     
     
     
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://vinnywang.com/post/d74caf85.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/icon/avatar.jpg">
-      <meta itemprop="name" content="王楠">
-      <meta itemprop="description" content="生命中最值得投资的是自己,给自己最佳的投资是学习。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="王楠的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/post/d74caf85.html" class="post-title-link" itemprop="url">机器学习--机器学习简介</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-02-09 09:42:41" itemprop="dateCreated datePublished" datetime="2021-02-09T09:42:41+08:00">2021-02-09</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ml/" itemprop="url" rel="index"><span itemprop="name">ml</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/post/d74caf85.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/post/d74caf85.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><img src="/images/machine/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0logo.jpg" alt="机器学习"></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/post/d74caf85.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
-    </div>
 
-    
-    
-    
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>王楠
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://vinnywang.com/post/beab2e09.html" title="Docker--外部访问K8s中Pod的五种方式">https://vinnywang.com/post/beab2e09.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
       <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
+          <div class="post-tags">
+              <a href="/tags/linux/" rel="tag"># linux</a>
+              <a href="/tags/docker/" rel="tag"># docker</a>
+              <a href="/tags/k8s/" rel="tag"># k8s</a>
+              <a href="/tags/kubernetes/" rel="tag"># kubernetes</a>
+          </div>
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://vinnywang.com/post/c12f04da.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/icon/avatar.jpg">
-      <meta itemprop="name" content="王楠">
-      <meta itemprop="description" content="生命中最值得投资的是自己,给自己最佳的投资是学习。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="王楠的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/post/c12f04da.html" class="post-title-link" itemprop="url">Python--文件读写操作</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-02-09 09:42:41" itemprop="dateCreated datePublished" datetime="2021-02-09T09:42:41+08:00">2021-02-09</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/post/c12f04da.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/post/c12f04da.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><img src="/images/icon/python.jpg" alt="python"></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/post/c12f04da.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
-    </div>
 
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://vinnywang.com/post/ea5dd043.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/icon/avatar.jpg">
-      <meta itemprop="name" content="王楠">
-      <meta itemprop="description" content="生命中最值得投资的是自己,给自己最佳的投资是学习。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="王楠的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/post/ea5dd043.html" class="post-title-link" itemprop="url">Python基础 --输入输出</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-02-09 09:42:41" itemprop="dateCreated datePublished" datetime="2021-02-09T09:42:41+08:00">2021-02-09</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/post/ea5dd043.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/post/ea5dd043.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="Python基础-–输入输出"><a href="#Python基础-–输入输出" class="headerlink" title="Python基础 –输入输出"></a>Python基础 –输入输出</h1><h2 id="基本格式"><a href="#基本格式" class="headerlink" title="基本格式"></a>基本格式</h2><ul>
-<li>如果需要同时输出数字和字符的时候,需要格式化操作符</li>
-<li>格式化操作符:专门处理字符串中的格式<pre><code>  - 包含 `%`的字符串被称为格式化字符串
-  - `%`和不同的字符进行连用,不同的数据需要不通的格式化字符
-</code></pre>
-<table>
-<thead>
-<tr>
-<th align="left">常用格式化字符</th>
-<th align="right">含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">%s</td>
-<td align="right">字符串</td>
-</tr>
-<tr>
-<td align="left">%d</td>
-<td align="right">有符号十进制的整数,%06d 输出的整数显示位数,不足的地方使用0补全</td>
-</tr>
-<tr>
-<td align="left">%f</td>
-<td align="right">浮点数<code>%.2f</code>表示显示小数点的后两位</td>
-</tr>
-<tr>
-<td align="left">%%</td>
-<td align="right">输出%</td>
-</tr>
-</tbody></table>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/post/ea5dd043.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/post/d74caf85.html" rel="prev" title="机器学习--机器学习简介">
+      <i class="fa fa-chevron-left"></i> 机器学习--机器学习简介
+    </a></div>
+      <div class="post-nav-item"></div>
     </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
       </footer>
+    
   </article>
   
   
   
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://vinnywang.com/post/b64db797.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/icon/avatar.jpg">
-      <meta itemprop="name" content="王楠">
-      <meta itemprop="description" content="生命中最值得投资的是自己,给自己最佳的投资是学习。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="王楠的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/post/b64db797.html" class="post-title-link" itemprop="url">Python基础--组包和解包</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-02-09 09:42:41" itemprop="dateCreated datePublished" datetime="2021-02-09T09:42:41+08:00">2021-02-09</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/post/b64db797.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/post/b64db797.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><img src="/images/icon/python.jpg" alt="python"></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/post/b64db797.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://vinnywang.com/post/a896d36e.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/icon/avatar.jpg">
-      <meta itemprop="name" content="王楠">
-      <meta itemprop="description" content="生命中最值得投资的是自己,给自己最佳的投资是学习。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="王楠的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/post/a896d36e.html" class="post-title-link" itemprop="url">Python基础--字符串</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-02-09 09:42:41" itemprop="dateCreated datePublished" datetime="2021-02-09T09:42:41+08:00">2021-02-09</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/post/a896d36e.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/post/a896d36e.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><img src="/images/icon/python.jpg" alt="python"></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/post/a896d36e.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://vinnywang.com/post/93168db1.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/icon/avatar.jpg">
-      <meta itemprop="name" content="王楠">
-      <meta itemprop="description" content="生命中最值得投资的是自己,给自己最佳的投资是学习。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="王楠的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/post/93168db1.html" class="post-title-link" itemprop="url">Python基础--自定义异常</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-02-09 09:42:41" itemprop="dateCreated datePublished" datetime="2021-02-09T09:42:41+08:00">2021-02-09</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/post/93168db1.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/post/93168db1.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><img src="/images/icon/python.jpg" alt="python"></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/post/93168db1.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://vinnywang.com/post/91391f6c.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/icon/avatar.jpg">
-      <meta itemprop="name" content="王楠">
-      <meta itemprop="description" content="生命中最值得投资的是自己,给自己最佳的投资是学习。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="王楠的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/post/91391f6c.html" class="post-title-link" itemprop="url">Python基础--重写</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-02-09 09:42:41" itemprop="dateCreated datePublished" datetime="2021-02-09T09:42:41+08:00">2021-02-09</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/post/91391f6c.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/post/91391f6c.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><img src="/images/icon/python.jpg" alt="python"></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/post/91391f6c.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://vinnywang.com/post/8f098d77.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/icon/avatar.jpg">
-      <meta itemprop="name" content="王楠">
-      <meta itemprop="description" content="生命中最值得投资的是自己,给自己最佳的投资是学习。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="王楠的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/post/8f098d77.html" class="post-title-link" itemprop="url">Python基础--引用</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-02-09 09:42:41" itemprop="dateCreated datePublished" datetime="2021-02-09T09:42:41+08:00">2021-02-09</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/post/8f098d77.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/post/8f098d77.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="Python基础–引用"><a href="#Python基础–引用" class="headerlink" title="Python基础–引用"></a>Python基础–引用</h1><p><img src="/images/icon/python.jpg" alt="python"></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/post/8f098d77.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://vinnywang.com/post/cd498686.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/icon/avatar.jpg">
-      <meta itemprop="name" content="王楠">
-      <meta itemprop="description" content="生命中最值得投资的是自己,给自己最佳的投资是学习。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="王楠的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/post/cd498686.html" class="post-title-link" itemprop="url">Python基础--异常传递</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-02-09 09:42:41" itemprop="dateCreated datePublished" datetime="2021-02-09T09:42:41+08:00">2021-02-09</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/post/cd498686.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/post/cd498686.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><img src="/images/icon/python.jpg" alt="python"></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/post/cd498686.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-
-  
-  <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
-  </nav>
 
 
 
           </div>
           
+    <div class="comments" id="valine-comments"></div>
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -1192,6 +407,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#HostNetwork"><span class="nav-number">1.</span> <span class="nav-text">HostNetwork</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HostPort"><span class="nav-number">2.</span> <span class="nav-text">HostPort</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#NodePort"><span class="nav-number">3.</span> <span class="nav-text">NodePort</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#LoadBalancer"><span class="nav-number">4.</span> <span class="nav-text">LoadBalancer</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Ingress"><span class="nav-number">5.</span> <span class="nav-text">Ingress</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
