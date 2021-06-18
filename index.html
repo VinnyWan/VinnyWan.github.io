@@ -218,127 +218,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://vinnywang.com/post/952a07bb.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/icon/avatar.jpg">
-      <meta itemprop="name" content="王楠">
-      <meta itemprop="description" content="生命中最值得投资的是自己,给自己最佳的投资是学习。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="王楠博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/post/952a07bb.html" class="post-title-link" itemprop="url">Docker--k8s自定义DNS</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-06-18 14:48:02 / 修改时间：14:48:12" itemprop="dateCreated datePublished" datetime="2021-06-18T14:48:02+08:00">2021-06-18</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/docker/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/docker/linux/k8s/" itemprop="url" rel="index"><span itemprop="name">k8s</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/docker/linux/k8s/kubernetes/" itemprop="url" rel="index"><span itemprop="name">kubernetes</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/post/952a07bb.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/post/952a07bb.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="CoreDNS概念"><a href="#CoreDNS概念" class="headerlink" title="CoreDNS概念"></a>CoreDNS概念</h1><p>CoreDNS可以在具有标准的Kube-DNS的Kubernetes集群中运行。作为Kubernetes 的插件使用，CoreDNS将从 Kubernetes集群中读取区（zone）数据。</p>
-<h1 id="CoreDNS-ConfigMap选项"><a href="#CoreDNS-ConfigMap选项" class="headerlink" title="CoreDNS ConfigMap选项"></a>CoreDNS ConfigMap选项</h1><p>CoreDNS 是模块化且可插拔的 DNS 服务器，每个插件都为 CoreDNS 添加了新功能。 可以通过维护 Corefile，即 CoreDNS 配置文件， 来定制其行为。 集群管理员可以修改 CoreDNS Corefile 的 ConfigMap，以更改服务发现的工作方式。</p>
-<p>在 Kubernetes 中，CoreDNS 安装时使用如下默认 Corefile 配置。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: ConfigMap</span><br><span class="line">metadata:</span><br><span class="line">  name: coredns</span><br><span class="line">  namespace: kube-system</span><br><span class="line">data:</span><br><span class="line">  Corefile: |</span><br><span class="line">    .:53 &#123;</span><br><span class="line">        errors</span><br><span class="line">        health &#123;</span><br><span class="line">            lameduck 5s</span><br><span class="line">        &#125;</span><br><span class="line">        ready</span><br><span class="line">        kubernetes cluster.local in-addr.arpa ip6.arpa &#123;</span><br><span class="line">           pods insecure</span><br><span class="line">           fallthrough in-addr.arpa ip6.arpa</span><br><span class="line">           ttl 30</span><br><span class="line">        &#125;</span><br><span class="line">        prometheus :9153</span><br><span class="line">        forward . &#x2F;etc&#x2F;resolv.conf</span><br><span class="line">        cache 30</span><br><span class="line">        loop</span><br><span class="line">        reload</span><br><span class="line">        loadbalance</span><br><span class="line">    &#125;  </span><br></pre></td></tr></table></figure>
-<h1 id="CoreDNS-包含插件说明"><a href="#CoreDNS-包含插件说明" class="headerlink" title="CoreDNS 包含插件说明"></a>CoreDNS 包含插件说明</h1><ul>
-<li>Corefile 配置包括以下 CoreDNS 插件：</li>
-<li>errors：错误记录到标准输出。</li>
-<li>health：在 <a target="_blank" rel="noopener" href="http://localhost:8080/health">http://localhost:8080/health</a> 处提供 CoreDNS 的健康报告。</li>
-<li>ready：在端口 8181 上提供的一个 HTTP 末端，当所有能够 表达自身就绪的插件都已就绪时，在此末端返回 200 OK。</li>
-<li>kubernetes：CoreDNS 将基于 Kubernetes 的服务和 Pod 的 IP 答复 DNS 查询。你可以在 CoreDNS 网站阅读更多细节。 你可以使用 ttl 来定制响应的 TTL。默认值是 5 秒钟。TTL 的最小值可以是 0 秒钟， 最大值为 3600 秒。将 TTL 设置为 0 可以禁止对 DNS 记录进行缓存。</li>
-<li>pods insecure 选项是为了与 kube-dns 向后兼容。你可以使用 pods verified 选项，该选项使得 仅在相同名称空间中存在具有匹配 IP 的 Pod 时才返回 A 记录。如果你不使用 Pod 记录，则可以使用 pods disabled 选项。</li>
-<li>prometheus：CoreDNS 的度量指标值以 Prometheus 格式在 <a target="_blank" rel="noopener" href="http://localhost:9153/metrics">http://localhost:9153/metrics</a> 上提供。</li>
-<li>forward: 不在 Kubernetes 集群域内的任何查询都将转发到 预定义的解析器 (/etc/resolv.conf).</li>
-<li>cache：启用前端缓存。</li>
-<li>loop：检测到简单的转发环，如果发现死循环，则中止 CoreDNS 进程。</li>
-<li>reload：允许自动重新加载已更改的 Corefile。 编辑 ConfigMap 配置后，请等待两分钟，以使更改生效。</li>
-<li>loadbalance：这是一个轮转式 DNS 负载均衡器， 它在应答中随机分配 A、AAAA 和 MX 记录的顺序。<br>你可以通过修改 ConfigMap 来更改默认的 CoreDNS 行为。</li>
-</ul>
-<h1 id="添加自定义-DNS"><a href="#添加自定义-DNS" class="headerlink" title="添加自定义 DNS"></a>添加自定义 DNS</h1><p>如果自建了 DNS ，且域名均为 aaa.com, 对应的 dns 服务器的 IP地址为<code>10.100.10.1</code>.要在 CoreDNS 中对其进行配置， 可以在 CoreDNS 的 ConfigMap 中创建加入以下字段。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">aaa.com:53 &#123;</span><br><span class="line">        errors</span><br><span class="line">        cache 30</span><br><span class="line">        forward . 10.100.10.1</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>最终的包含默认的 Corefile 配置的 ConfigMap 如下所示：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: ConfigMap</span><br><span class="line">metadata:</span><br><span class="line">  name: coredns</span><br><span class="line">  namespace: kube-system</span><br><span class="line">data:</span><br><span class="line">  Corefile: |</span><br><span class="line">    .:53 &#123;</span><br><span class="line">        errors</span><br><span class="line">        health &#123;</span><br><span class="line">            lameduck 5s</span><br><span class="line">        &#125;</span><br><span class="line">        ready</span><br><span class="line">        kubernetes cluster.local in-addr.arpa ip6.arpa &#123;</span><br><span class="line">           pods insecure</span><br><span class="line">           fallthrough in-addr.arpa ip6.arpa</span><br><span class="line">           ttl 30</span><br><span class="line">        &#125;</span><br><span class="line">        prometheus :9153</span><br><span class="line">        forward . &#x2F;etc&#x2F;resolv.conf</span><br><span class="line">        cache 30</span><br><span class="line">        loop</span><br><span class="line">        reload</span><br><span class="line">        loadbalance</span><br><span class="line">    &#125;</span><br><span class="line">    aaa.com:53 &#123;</span><br><span class="line">        errors</span><br><span class="line">        cache 30</span><br><span class="line">        forward . 10.100.10.1</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>如果对应的 DNS 服务器有很多的域名，比如包含 bbb.com , ccc.com . DNS服务 IP 地址为 10.100.10.2  强制所有非集群 DNS 查找通过特定的域名服务器（位于 10.100.10.2），可将 forward 指向该域名服务器，而不是 /etc/resolv.conf。<br>最终的包含默认的 Corefile 配置的 ConfigMap 如下所示：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: ConfigMap</span><br><span class="line">metadata:</span><br><span class="line">  name: coredns</span><br><span class="line">  namespace: kube-system</span><br><span class="line">data:</span><br><span class="line">  Corefile: |</span><br><span class="line">    .:53 &#123;</span><br><span class="line">        errors</span><br><span class="line">        health &#123;</span><br><span class="line">            lameduck 5s</span><br><span class="line">        &#125;</span><br><span class="line">        ready</span><br><span class="line">        kubernetes cluster.local in-addr.arpa ip6.arpa &#123;</span><br><span class="line">           pods insecure</span><br><span class="line">           fallthrough in-addr.arpa ip6.arpa</span><br><span class="line">           ttl 30</span><br><span class="line">        &#125;</span><br><span class="line">        prometheus :9153</span><br><span class="line">        forward . 10.100.10.2</span><br><span class="line">        cache 30</span><br><span class="line">        loop</span><br><span class="line">        reload</span><br><span class="line">        loadbalance</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<h1 id="修改对应的-cm"><a href="#修改对应的-cm" class="headerlink" title="修改对应的 cm"></a>修改对应的 cm</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl edit configmap coredns -n kube-system</span><br><span class="line"># 参考上面的 cm 进行添加修改即可</span><br></pre></td></tr></table></figure>
-<p>修改<code>cm</code>之后需要在重启下 coredns，有两种方法，1. scale  2. delete</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># scale</span><br><span class="line">kubectl scale deployment coredns -n kube-system --replicas&#x3D;0</span><br><span class="line">kubectl scale deployment coredns -n kube-system --replicas&#x3D;2</span><br><span class="line"># delete</span><br><span class="line"># 找到对应的 coredns pod  然后进行删除</span><br><span class="line">kubectl get pods  -n kube-system |grep coredns</span><br><span class="line"># 然后手动删除pod 即可，一个一个删除，会自动拉起的</span><br></pre></td></tr></table></figure>
-<p>参考文档 1<img src="https://kubernetes.io/zh/docs/tasks/administer-cluster/dns-custom-nameservers/#%E4%BD%BF%E7%94%A8-coredns-%E9%85%8D%E7%BD%AE%E5%AD%98%E6%A0%B9%E5%9F%9F%E5%92%8C%E4%B8%8A%E6%B8%B8%E5%9F%9F%E5%90%8D%E6%9C%8D%E5%8A%A1%E5%99%A8" alt="k8s自定义dns配置文档"><br>参考文档 2 <img src="https://kubernetes.io/zh/docs/concepts/services-networking/dns-pod-service/#pod-dns-config" alt="k8spod内置DNS"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://vinnywang.com/post/5a936e5c.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1169,6 +1048,94 @@
   
   
 
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://vinnywang.com/post/8f098d77.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/icon/avatar.jpg">
+      <meta itemprop="name" content="王楠">
+      <meta itemprop="description" content="生命中最值得投资的是自己,给自己最佳的投资是学习。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="王楠博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/post/8f098d77.html" class="post-title-link" itemprop="url">Python基础--引用</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-09 09:42:41" itemprop="dateCreated datePublished" datetime="2021-02-09T09:42:41+08:00">2021-02-09</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/8f098d77.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/8f098d77.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Python基础–引用"><a href="#Python基础–引用" class="headerlink" title="Python基础–引用"></a>Python基础–引用</h1><p><img src="/images/icon/python.jpg" alt="python"></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/post/8f098d77.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
 
   
   <nav class="pagination">
@@ -1240,7 +1207,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">77</span>
+          <span class="site-state-item-count">76</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
