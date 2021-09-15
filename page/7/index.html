@@ -218,6 +218,94 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://vinnywang.com/post/38096.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/icon/avatar.jpg">
+      <meta itemprop="name" content="王楠">
+      <meta itemprop="description" content="生命中最值得投资的是自己,给自己最佳的投资是学习。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="王楠博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/post/38096.html" class="post-title-link" itemprop="url">KVM环境下制作CentOS7 qcow2格式镜像</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-09 09:42:37" itemprop="dateCreated datePublished" datetime="2021-02-09T09:42:37+08:00">2021-02-09</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/38096.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/38096.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="KVM环境下制作CentOS7-qcow2格式镜像"><a href="#KVM环境下制作CentOS7-qcow2格式镜像" class="headerlink" title="KVM环境下制作CentOS7 qcow2格式镜像"></a>KVM环境下制作CentOS7 qcow2格式镜像</h1><p><code>virt-install</code>是一个命令行工具，它能够为KVM、Xen或其它支持libvirt API的hypervisor创建虚拟机并完成GuestOS安装；此外，它能够基于串行控制台、VNC或SDL支持文本或图形安装界面。安装过程可以使用本地的安装介质如CDROM，也可以通过网络方式如NFS、HTTP或FTP服务实现。对于通过网络安装的方式，virt-install可以自动加载必要的文件以启动安装过程而无须额外提供引导工具。当然，virt-install也支持PXE方式的安装过程，也能够直接使用现有的磁盘映像直接启动安装过程。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/post/38096.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://vinnywang.com/post/45d64540.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1050,100 +1138,6 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"># 通过命令docker commit 来提交容器副本 创建新的镜像</span><br><span class="line">[root@centos7 ~]# docker commit -m&#x3D;&quot;yum update&quot; -a&#x3D;&quot;user&quot; 4d95f2fd7cfb user&#x2F;centos:v2</span><br><span class="line">sha256:8aee4e075a0d907c757bcc3946165447607bfe8d726888fad090fdc9ddda0718</span><br><span class="line"></span><br><span class="line"># 查看是否生产新的镜像</span><br><span class="line">[root@centos7 ~]# docker images</span><br><span class="line">REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">user&#x2F;centos         v2                  8aee4e075a0d        12 seconds ago      203MB</span><br><span class="line"></span><br><span class="line"># 启动新的镜像容器</span><br><span class="line">[root@centos7 ~]# docker run -itd user&#x2F;centos:v2 &#x2F;bin&#x2F;bash</span><br><span class="line">799efd51587574113896b3c3218b08664b864c155490ca2728e65452a9f44901</span><br><span class="line"></span><br><span class="line"># 查看启动的容器</span><br><span class="line">[root@centos7 ~]# docker ps</span><br><span class="line">CONTAINER ID        IMAGE                   COMMAND             CREATED             STATUS              PORTS               NAMES</span><br><span class="line">799efd515875        user&#x2F;centos:v2          &quot;&#x2F;bin&#x2F;bash&quot;         4 seconds ago       Up 3 seconds                            elastic_euclid</span><br><span class="line">4d95f2fd7cfb        centos:centos7.8.2003   &quot;&#x2F;bin&#x2F;bash&quot;         5 minutes ago       Up 5 minutes                            angry_cori</span><br><span class="line"></span><br><span class="line"># 停止旧的容器</span><br><span class="line">[root@centos7 ~]# docker stop 4d95f2fd7cfb</span><br><span class="line">4d95f2fd7cfb</span><br><span class="line"># 删除旧的容器</span><br><span class="line">[root@centos7 ~]# docker rm 4d95f2fd7cfb</span><br><span class="line">4d95f2fd7cfb</span><br><span class="line"># 查看剩余容器状态</span><br><span class="line">[root@centos7 ~]# docker ps</span><br><span class="line">CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES</span><br><span class="line">799efd515875        user&#x2F;centos:v2      &quot;&#x2F;bin&#x2F;bash&quot;         3 minutes ago       Up 3 minutes                            elastic_euclid</span><br></pre></td></tr></table></figure>
 <h1 id="设置镜像标签"><a href="#设置镜像标签" class="headerlink" title="设置镜像标签"></a>设置镜像标签</h1><p>使用 docker tag 命令，为镜像添加一个新的标签。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># 查看镜像</span><br><span class="line">[root@centos7 ~]# docker images</span><br><span class="line">REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">nginx               alpine              6f715d38cfe0        2 weeks ago         22.1MB</span><br><span class="line"></span><br><span class="line"># 为镜像搭上tag号</span><br><span class="line">[root@centos7 ~]# docker tag 6f715d38cfe0 nginx:new</span><br><span class="line"></span><br><span class="line"># 确认最终状态，生成两个镜像，可以理解为复制镜像</span><br><span class="line">[root@centos7 ~]# docker images</span><br><span class="line">REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">nginx               alpine              6f715d38cfe0        2 weeks ago         22.1MB</span><br><span class="line">nginx               new                 6f715d38cfe0        2 weeks ago         22.1MB</span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://vinnywang.com/post/995b8fff.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/icon/avatar.jpg">
-      <meta itemprop="name" content="王楠">
-      <meta itemprop="description" content="生命中最值得投资的是自己,给自己最佳的投资是学习。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="王楠博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/post/995b8fff.html" class="post-title-link" itemprop="url">Docker--Docker运行是资源限制</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-02-09 09:42:36 / 修改时间：11:04:05" itemprop="dateCreated datePublished" datetime="2021-02-09T09:42:36+08:00">2021-02-09</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/docker/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/post/995b8fff.html#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/post/995b8fff.html" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="Docker–Docker运行是资源限制"><a href="#Docker–Docker运行是资源限制" class="headerlink" title="Docker–Docker运行是资源限制"></a>Docker–Docker运行是资源限制</h1><p>Docker 提供的内存限制功能有以下几点：<br>一般情况下，达到内存限制的容器过段时间后就会被系统杀死</p>
-<ul>
-<li>容器能使用的内存和交换分区大小。</li>
-<li>容器的核心内存大小。</li>
-<li>容器虚拟内存的交换行为。</li>
-<li>容器内存的软性限制。</li>
-<li>是否杀死占用过多内存的容器。</li>
-<li>容器被杀死的优先级</li>
-</ul>
-
       
     </div>
 
